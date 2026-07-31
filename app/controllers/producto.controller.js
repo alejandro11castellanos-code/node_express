@@ -1,6 +1,6 @@
 // importamos db los modelos en este caso si tenemos uno o mas, se puede referenciar db."nombreModelo".   
 const db = require("../models");
-const Proveedor = db.proveedor;
+const Producto = db.producto;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Client
@@ -14,22 +14,22 @@ exports.create = (req, res) => {
     }
 
     // Create a Client, definiendo una variable con la estructura del reques para luego solo ser enviada como parametro mas adelante. 
-    const proveedor = {
+    const producto = {
         nombre: req.body.nombre,
-        apellido: req.body.apellido,
-        correo: req.body.correo,
-        telefono: req.body.telefono,
+        cantidad: req.body.cantidad,
+        stock: req.body.stock ? req.body.stock : false,
+        preciou: req.body.preciou
     };
 
     // Save a new Client into the database
-    Proveedor.create(proveedor)
+    Producto.create(producto)
         .then(data => {
             res.send(data);
         })
         .catch(err => {
             res.status(500).send({
                 message:
-                    err.message || "Some error occurred while creating the Proveedor."
+                    err.message || "Some error occurred while creating the Producto."
             });
         });
 };
@@ -39,14 +39,14 @@ exports.findAll = (req, res) => {
     const nombre = req.query.nombre;
     var condition = nombre ? { nombre: { [Op.iLike]: `%${nombre}%` } } : null;
 
-    Proveedor.findAll({ where: condition })
+    Producto.findAll({ where: condition })
         .then(data => {
             res.send(data);
         })
         .catch(err => {
             res.status(500).send({
                 message:
-                    err.message || "Some error occurred while retrieving clients."
+                    err.message || "Some error occurred while retrieving Producto."
             });
         });
 };
@@ -55,13 +55,13 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
     const id = req.params.id;
 
-    Proveedor.findByPk(id)
+    Producto.findByPk(id)
         .then(data => {
             res.send(data);
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error retrieving Proveedor with id=" + id
+                message: "Error retrieving Producto with id=" + id
             });
         });
 };
@@ -70,23 +70,23 @@ exports.findOne = (req, res) => {
 exports.update = (req, res) => {
     const id = req.params.id;
 
-    Proveedor.update(req.body, {
+    Producto.update(req.body, {
         where: { id: id }
     })
         .then(num => {
             if (num == 1) {
                 res.send({
-                    message: "Proveedor was updated successfully."
+                    message: "Producto was updated successfully."
                 });
             } else {
                 res.send({
-                    message: `Cannot update Proveedor with id=${id}. Maybe proveedor was not found or req.body is empty!`
+                    message: `Cannot update Producto with id=${id}. Maybe Producto was not found or req.body is empty!`
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error updating Proveedor with id=" + id
+                message: "Error updating Producto with id=" + id
             });
         });
 };
@@ -95,17 +95,17 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
     const id = req.params.id;
     // utilizamos el metodo destroy para eliminar el objeto mandamos la condicionante where id = parametro que recibimos 
-    Proveedor.destroy({
+    Producto.destroy({
         where: { id: id }
     })
         .then(num => {
             if (num == 1) {
                 res.send({
-                    message: "Proveedor was deleted successfully!"
+                    message: "Producto was deleted successfully!"
                 });
             } else {
                 res.send({
-                    message: `Cannot delete Proveedor with id=${id}. El proveedor no fue encontado!`
+                    message: `Cannot delete Producto with id=${id}. El Producto no fue encontado!`
                 });
             }
         })
@@ -118,31 +118,31 @@ exports.delete = (req, res) => {
 
 // Delete all Clients from the database.
 exports.deleteAll = (req, res) => {
-    Proveedor.destroy({
+    Producto.destroy({
         where: {},
         truncate: false
     })
         .then(nums => {
-            res.send({ message: `${nums} Proveedores were deleted successfully!` });
+            res.send({ message: `${nums} Producto were deleted successfully!` });
         })
         .catch(err => {
             res.status(500).send({
                 message:
-                    err.message || "Some error occurred while removing all proveedotes."
+                    err.message || "Some error occurred while removing all Producto."
             });
         });
 };
 
 // find all active Client, basado en el atributo status vamos a buscar que solo los clientes activos
 exports.findAllStatus = (req, res) => {
-    Proveedor.findAll({ where: { status: true } })
+    Producto.findAll({ where: { status: true } })
         .then(data => {
             res.send(data);
         })
         .catch(err => {
             res.status(500).send({
                 message:
-                    err.message || "Some error occurred while retrieving proveedor."
+                    err.message || "Some error occurred while retrieving Producto."
             });
         }); 
 };
